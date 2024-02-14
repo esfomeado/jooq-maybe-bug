@@ -6,6 +6,7 @@ import org.jooq.impl.DSL
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
+import reactor.core.publisher.Mono
 
 /**
  * Created by kevin on 29/12/2021
@@ -15,5 +16,7 @@ import org.springframework.context.annotation.Import
 class JooqConfig {
 
     @Bean
-    fun dslContext(cf: ConnectionFactory): DSLContext = DSL.using(cf).dsl()
+    fun dslContext(cf: ConnectionFactory): DSLContext? = Mono.from(cf.create()).map {
+        DSL.using(it)
+    }.block()
 }
